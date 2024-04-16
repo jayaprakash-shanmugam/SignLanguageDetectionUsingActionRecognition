@@ -1,0 +1,69 @@
+import cv2
+import streamlit as st
+from ultralytics import YOLO
+
+st.title("YOLO Object Detection with Image Input")
+
+# Load YOLO model
+model = YOLO("best.pt")
+
+# Function to perform object detection on an image
+def detect_objects(image_path):
+    # Perform object detection
+    model.predict(source=image_path, show=False, save=True)
+
+    # Display the detected image
+    detected_image = cv2.imread('runs/detect/predict/aaa.jpg')
+    return detected_image
+
+# Perform object detection on the specified image
+detected_image = detect_objects('aaa.jpg')
+
+# Display the detected objects
+st.image(detected_image, channels="BGR")
+
+
+
+
+
+
+
+import cv2
+import streamlit as st
+from PIL import Image
+from io import BytesIO
+from ultralytics import YOLO
+import numpy as np
+st.title("YOLO Object Detection with Image Input")
+
+# Load YOLO model
+model = YOLO("best.pt")
+
+# Function to perform object detection on an image
+def detect_objects(image):
+    # Convert PIL image to OpenCV format
+    image_cv = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+
+    # Save the uploaded image
+    cv2.imwrite("uploaded_image.jpg", image_cv)
+
+    # Perform object detection
+    model.predict(source="uploaded_image.jpg", show=False, save=True)
+
+    # Read the detected image
+    detected_image = cv2.imread("runs/detect/predict/uploaded_image.jpg")
+    return detected_image
+
+# Upload an image file
+uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png"])
+
+# Display the uploaded image and detected objects
+if uploaded_file is not None:
+    # Convert the uploaded file to PIL image
+    image = Image.open(BytesIO(uploaded_file.read()))
+
+    # Perform object detection on the uploaded image
+    detected_image = detect_objects(image)
+
+    # Display the uploaded image
+    st.image(detected_image, channels="BGR")
